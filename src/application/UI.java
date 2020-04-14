@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
-import javax.management.RuntimeErrorException;
-
 import chess.ChessMatch;
 import chess.ChessPiece;
 import chess.ChessPosition;
@@ -49,7 +47,7 @@ public class UI {
 			int row = Integer.parseInt(s.substring(1));
 			return new ChessPosition(column, row);
 		} 
-		catch (RuntimeErrorException e) {
+		catch (RuntimeException e) {
 			throw new InputMismatchException("Error reading ChessPosition. Valid values are from a1 to h8.");
 		}
 	}
@@ -60,9 +58,15 @@ public class UI {
 		printCapturedPieces(captured);
 		System.out.println();
 		System.out.println("Turn: " + chessMatch.getTurn());
-		System.out.println("Waiting player: " + chessMatch.getCurrentPlayer());
-		if(chessMatch.getCheck()) {
-			System.out.println("CHECK!");
+		if(!chessMatch.getCheckMate()) {
+			System.out.println("Waiting player: " + chessMatch.getCurrentPlayer());
+			if(chessMatch.getCheck()) {
+				System.out.println("CHECK!");
+			}
+		}
+		else {
+			System.out.println("CHECKMATE!");
+			System.out.println("Winner: " + chessMatch.getCurrentPlayer());
 		}
 	}
 	
@@ -94,10 +98,12 @@ public class UI {
 		}
 		if (piece == null) {
 			System.out.print("-" + ANSI_RESET);
-		} else {
+		}
+		else {
 			if (piece.getColor() == Color.WHITE) {
 				System.out.print(ANSI_WHITE + piece + ANSI_RESET);
-			} else {
+			} 
+			else {
 				System.out.print(ANSI_YELLOW + piece + ANSI_RESET);
 			}
 		}
